@@ -131,7 +131,7 @@ module mp3(
                 PLAY:begin
                 if(cntdown > 0)
                     cntdown <= cntdown - 1'b1;
-                else if(play)begin
+                else if(play && rst == 0)begin
                     XDCS <= 1'b0;
                     ena <= 1'b1;
                     if(cntSended == 0) begin              //´«Êä4×Ö½Ú

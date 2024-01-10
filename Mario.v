@@ -1,4 +1,4 @@
-`timescale 1ns / 1ps
+`timescale 1ns / 1ns
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
@@ -21,103 +21,142 @@
 
 
 module Mario(
-	input clk, 
-	input clk_walk_anim, 
-	input clk_hero_anim, 
-	input rstn, 
-	input left, 
-	input right, 
+	input clk,      // 用于判断左右方向等
+	input clk_walk, // 用于切换mario的动作
+	input rst, 
+	input left,  // 向左走
+	input right, // 向右走
 	input jump, 
 
 	output reg [5:0] id, 
 	output reg oriental, // 0: right 1: left 
-	output reg walk, // 0: no 1: yes
-	output [10:0] w, 
-	output [10:0] max_w, 
-	output [10:0] h, 
-	output [10:0] max_h
+	output reg walk,     // 0: no 1: yes
+	output rising
    );
 
-	parameter player1l = 15;
-	parameter player1r = 16;
-	parameter player2l = 17;
-	parameter player2r = 18;
-	parameter player3l = 19;
-	parameter player3r = 20;
-	parameter null = 63;
+    //state machine walk
+    parameter walk1 = 2'd0;
+    parameter walk2 = 2'd1;
+    parameter walk3 = 2'd2;
+    parameter walk4 = 2'd3;
+    
+    // 便于搜索id
+	parameter player1r = 32;
+    parameter player1l = 42;
+	parameter player2r = 33;
+	parameter player2l = 43;
+	parameter player3r = 34;
+	parameter player3l = 44;
+	parameter player4r = 35;
+	parameter player4l = 45;
 
-	reg [1:0] walk_state; // 0/1/2
-	reg walk_state_increase;
+	reg [1:0] walk_state; // 0/1/2/3 //行走帧
 
-	wire [6:0] state;
-	assign state[6:0] = {oriental, level, walk, hero, hero_state, walk_state};
-
-	reg pre_walk_anim;
-
-	always@(posedge clk) begin
-		if (~rstn) begin
-
-			if (~oriental & left & ~right)
-				oriental = 1;
-			if (oriental & ~left & right)
-				oriental = 0;
-			walk = left | right;
-
-			if (clk_walk_anim == 1 && pre_walk_anim == 0) begin
-				if (walk && ~jump)
-					if (walk_state_increase)
-						case (walk_state)
-							0: walk_state = 1;
-							1: begin walk_state = 2; walk_state_increase = 0; end
-						endcase
-					else
-						case (walk_state)
-							2: walk_state = 1;
-							1: begin walk_state = 0; walk_state_increase = 1; end
-						endcase
-			end
+    reg pre_walk_0;
+    reg pre_walk_1;
+    //wire rising;
+    
+    assign rising = pre_walk_0 & ~pre_walk_1;
+    
+	always@(posedge clk, negedge rst) begin
+		if (!rst) 
+		begin
+			oriental <= 0;
+            walk <= 0;
+            walk_state <= walk1;
+            pre_walk_0 <= 0;
+            pre_walk_1 <= 0;
+            id <= player1r;
+        end
+        else
+        begin
+			if (~oriental & left & ~right) // 判断方向，左右全为0or1，则方向不变
+				oriental <= 1;
+			else if (oriental & ~left & right)
+				oriental <= 0;
+				
+			walk <= left ^ right; // 全为0/1就不走
 			
-			pre_walk_anim = clk_walk_anim;
+			pre_walk_1 <= pre_walk_0;
+			pre_walk_0 <= clk_walk;
 
-		end else begin
-			oriental = 0;
-			walk = 0;
-			walk_state = 2'b0;
-			walk_state_increase = 1;
-			pre_walk_anim = clk_walk_anim;
-		end
-
+			if (rising)
+              if(jump == 0)
+				if (left != 1) // 没向左走
+				        case (walk_state)
+						    walk1: begin
+						              if(right == 1) begin
+						                  walk_state <= walk3;
+						                  id <= player3r;
+						              end
+						              else begin
+						                  walk_state <= walk1;
+						                  id <= player1r;
+						              end
+						           end
+						    walk2: begin 
+						              if(right == 1) begin
+                                          walk_state <= walk4;
+                                          id <= player4r;
+                                      end
+                                      else begin
+                                          walk_state <= walk1;
+                                          id <= player1r;
+                                      end
+                                   end
+						    walk3: begin 
+						              walk_state <= walk2;
+						              id <= player2r; 
+						           end
+						    walk4: begin 
+						              if(right == 1) begin
+						                  walk_state <= walk3;
+						                  id <= player3r;
+						              end
+                                      else begin
+                                          walk_state <= walk2; 
+                                          id <= player2r;
+                                      end
+                                   end
+					   endcase
+			     else
+				case (walk_state)
+                walk1: begin
+                          if(right == 0) begin
+                              walk_state <= walk3;
+                              id <= player3l;
+                          end
+                          else begin
+                              walk_state <= walk1;
+                              id <= player1l;
+                          end
+                       end
+                walk2: begin 
+                          if(right == 0) begin
+                              walk_state <= walk4;
+                              id <= player4l;
+                          end
+                          else begin
+                              walk_state <= walk1;
+                              id <= player1l;
+                          end
+                       end
+                walk3: begin 
+                          walk_state <= walk2;
+                          id <= player2l; 
+                       end
+                walk4: begin 
+                          if(right == 0) begin
+                              walk_state <= walk3;
+                              id <= player3l;
+                          end
+                          else begin
+                              walk_state <= walk2; 
+                              id <= player2l;
+                          end
+                       end
+                endcase
+		end 
 	end
-
-	always@* begin
-		if (state[3:2] == 2'b10) 
-			id <= null;
-		else case(state[6:4])
-		
-			3'b010: id <= player1r;
-			3'b011: case(state[1:0])
-				2'b00: id <= player1r;
-				2'b01: id <= player2r;
-				2'b10: id <= player3r;
-				default: id <= 32;
-			endcase
-			
-			3'b110: id <= player1l;
-			3'b111: case(state[1:0])
-				2'b00: id <= player1l;
-				2'b01: id <= player2l;
-				2'b10: id <= player3l;
-				default: id <= 32;
-			endcase
-		
-			default: id <= 32;
-		endcase
-	end
-
-	Object object(
-		.id(id), 
-		.h(h), 
-		.w(w)
-	);
 
 endmodule

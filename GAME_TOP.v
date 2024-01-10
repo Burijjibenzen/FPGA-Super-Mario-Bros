@@ -23,7 +23,11 @@
 module GAME_TOP(
     input   clk_100,               //100Mhz
     input   rst,                    //复位
+    input   jump,
+    input   right,
+    input   left,
     
+    //VGA
     output [3:0]    color_r,    //R
     output [3:0]    color_g,    //G
     output [3:0]    color_b,    //B
@@ -40,8 +44,19 @@ module GAME_TOP(
     output      XRESET          //硬件复位，低电平有效
     );
     
+    wire [10:0] mario_x;
+    wire [9:0] mario_y;
+    wire [5:0] mario_id;
+    
     //时钟
-    wire clk_108, clk_12, locked;
+    wire clk_108, clk_12, clk_10, locked;
+    
+    wire [32:0] div; // 用于游戏界面的时钟
+    clkdiv uut_clkdiv(
+        .clk(clk), 
+        .rst(rst), 
+        .clkdiv(div)
+    );
     
     clk_wiz_0 uut_clk(
         .reset(~rst),
@@ -53,8 +68,11 @@ module GAME_TOP(
     
     VGA uut_vga(
         .clk(clk_108),
+        .clk_view(clk_10),
         .rst(rst),
-        .view(7'd10),
+        .mario_x(mario_x),
+        .mario_y(mario_y),
+        .mario_id(mario_id),
         .O_red(color_r),
         .O_green(color_g),
         .O_blue(color_b),
@@ -64,7 +82,8 @@ module GAME_TOP(
     
     Divider uut_divider(
         .clk12Mhz(clk_12),
-        .clk2Mhz(clk_2)
+        .clk2Mhz(clk_2),
+        .clk10Hz(clk_10)
     );
     
     mp3 uut_mp3(
@@ -78,6 +97,17 @@ module GAME_TOP(
         .SCK(SCK),
         .SI(SI),
         .XRESET(XRESET)
+    );
+    
+    World uut_world(
+        .clkdiv(div),
+        .rst(rst),
+        .jump(jump),
+        .left(left),
+        .right(right),
+        .mario_x(mario_x),
+        .mario_y(mario_y),
+        .mario_id(mario_id)
     );
     
 endmodule

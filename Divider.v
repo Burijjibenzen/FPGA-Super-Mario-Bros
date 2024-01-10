@@ -22,9 +22,11 @@
 
 module Divider(
     input clk12Mhz,
-    output reg clk2Mhz = 0
+    output reg clk2Mhz = 0,
+    output reg clk10Hz = 0
     );
     integer cnt1 = 32'd0;
+    integer cnt2 = 32'd0;
     always @(posedge clk12Mhz) begin
         if (cnt1 < 6 / 2 - 1)
             cnt1 <= cnt1 + 1'b1;
@@ -33,4 +35,39 @@ module Divider(
             clk2Mhz <= ~clk2Mhz;
         end
     end
+    
+    always @(posedge clk12Mhz) begin
+        if (cnt2 < 1200000 / 2 - 1)
+            cnt2 <= cnt2 + 1'b1;
+        else begin
+            cnt2 <= 32'd0;
+            clk10Hz <= ~clk10Hz;
+        end
+    end
 endmodule
+
+//module Divider(
+//    input clk100Mhz,
+//    output reg clk2Mhz = 0,
+//    output reg clk10Hz = 0
+//    );
+//    integer cnt1 = 32'd0;
+//    integer cnt2 = 32'd0;
+//    always @(posedge clk100Mhz) begin
+//        if (cnt1 < 50 / 2 - 1)
+//            cnt1 <= cnt1 + 1'b1;
+//        else begin
+//            cnt1 <= 32'd0;
+//            clk2Mhz <= ~clk2Mhz;
+//        end
+//    end
+    
+//    always @(posedge clk100Mhz) begin
+//        if (cnt2 < 10000000 / 2 - 1)
+//            cnt2 <= cnt2 + 1'b1;
+//        else begin
+//            cnt2 <= 32'd0;
+//            clk10Hz <= ~clk10Hz;
+//        end
+//    end
+//endmodule
