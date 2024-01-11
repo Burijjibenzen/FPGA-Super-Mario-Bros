@@ -23,9 +23,6 @@
 module GAME_TOP(
     input   clk_100,               //100Mhz
     input   rst,                    //复位
-    input   jump,
-    input   right,
-    input   left,
     
     //VGA
     output [3:0]    color_r,    //R
@@ -41,7 +38,11 @@ module GAME_TOP(
     output      XDCS,           //SDI 传输数据
     output      SCK,            //时钟
     output      SI,             //传入mp3
-    output      XRESET          //硬件复位，低电平有效
+    output      XRESET,         //硬件复位，低电平有效
+    
+    //键盘
+    input   key_clk,                //键盘时钟
+    input   key_data                //键盘输入数据
     );
     
     wire [10:0] mario_x;
@@ -51,12 +52,16 @@ module GAME_TOP(
     //时钟
     wire clk_108, clk_12, clk_10, locked;
     
-    wire [32:0] div; // 用于游戏界面的时钟
-    clkdiv uut_clkdiv(
-        .clk(clk), 
-        .rst(rst), 
-        .clkdiv(div)
-    );
+    //键盘输入
+    wire [8:0] keys;
+    wire key_state;
+	wire left;
+    wire jump;
+    wire right;
+    
+    assign left = (keys == 65);
+    assign right = (keys == 68);
+    assign jump = (keys == 87);
     
     clk_wiz_0 uut_clk(
         .reset(~rst),
@@ -73,6 +78,7 @@ module GAME_TOP(
         .mario_x(mario_x),
         .mario_y(mario_y),
         .mario_id(mario_id),
+        .right(right),
         .O_red(color_r),
         .O_green(color_g),
         .O_blue(color_b),
@@ -100,7 +106,8 @@ module GAME_TOP(
     );
     
     World uut_world(
-        .clkdiv(div),
+        .clk(clk),
+        .clk_10(clk_10),
         .rst(rst),
         .jump(jump),
         .left(left),
@@ -108,6 +115,15 @@ module GAME_TOP(
         .mario_x(mario_x),
         .mario_y(mario_y),
         .mario_id(mario_id)
+    );
+    
+    Keyboard uut_keyboard(
+        .clk_in(clk_100),
+        .rst(rst),
+        .key_clk(key_clk),
+        .key_data(key_data),
+        .key_state(key_state),
+        .key_ascii(keys)
     );
     
 endmodule

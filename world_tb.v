@@ -22,6 +22,7 @@
 
 module world_tb();
     reg clk;
+    reg clk_10;
     reg rst;
     reg jump;
     reg left;
@@ -30,25 +31,19 @@ module world_tb();
     wire [10:0] mario_x;
     wire [9:0]  mario_y;
     wire [5:0]  id;
-    wire rising;
-
-    wire [32:0] div; // 用于游戏界面的时钟
-    clkdiv uut_clkdiv(
-        .clk(clk), 
-        .rst(rst), 
-        .clkdiv(div)
-    );
+//    wire rising;
     
     World uut_world(
-        .clkdiv(div),
+        .clk(clk),
+        .clk_10(clk_10),
         .rst(rst),
         .jump(jump),
         .left(left),
         .right(right),
         .mario_x(mario_x),
         .mario_y(mario_y),
-        .mario_id(id),
-        .rising(rising)
+        .mario_id(id)
+//        .rising(rising)
     );
     
     initial
@@ -63,23 +58,34 @@ module world_tb();
     
     initial
     begin
+        clk_10 = 1;
+        forever
+        begin
+            #5000000 clk_10 = 0;
+            #5000000 clk_10 = 1;
+        end
+    end
+    
+    initial
+    begin
         rst = 0;
         #1 rst = 1;
     end
     
     initial
     begin
-        right = 1;
-        forever
-        begin
-        #13 right = 0;
-        #13 right = 1;
-        end
+        right = 0;
+//        forever
+//        begin
+//        #13 right = 0;
+//        #13 right = 1;
+//        end
     end
     
     initial
     begin
         left = 0;
+        #5000050 left = 1;
 //        forever
 //        begin
 //        #18 left = 1;
@@ -89,7 +95,7 @@ module world_tb();
     
     initial
     begin
-        jump = 0;
+        jump = 1;
     end
     
 endmodule

@@ -23,11 +23,11 @@
 module mp3(
     input       clk,            //12.288/6MHZ时钟
     input       rst,
-    input       play,           //开始播放请求
+    input       play,           //开始播放始播放请求
     input       SO,             //传出
     input       DREQ,           //数据请求，高电平时可传输数据
 
-    output reg  XCS,            //SCI 传输读写指令 片选输入 低电平有效
+    output reg  XCS,            //SCI 传输读写指令
     output reg  XDCS,           //SDI 传输数据
     output      SCK,            //时钟
     output reg  SI,             //传入mp3
@@ -42,22 +42,22 @@ module mp3(
                 PLAY        = 4'd6,         //播放
                 END         = 6'd7;         //结束
     
-    reg [3:0]       state       = WAIT;            //状态
+    reg [3:0]       state       = WAIT ;            //状态
     reg [31:0]      cntdown     = 32'd0;            //延时
-    reg [31:0]      cmd         = 32'd0;            //指令
+    reg [31:0]      cmd         = 32'd0;            //指令与地 
     reg [7:0]       cntData     = 8'd32;            //SCI指令地址位数计数
 
-    reg [31:0]      music_data     = 32'd0;           //音乐数据
-    reg [31:0]      cntSended     = 32'd32;           //SDI当前4字节已传送BIT
+    reg [31:0]      music_data  = 32'd0;           //音乐数据
+    reg [31:0]      cntSended   = 32'd32;          //SDI当前4字节已传送BIT
 
-    reg [9:0]         addra       = 10'd0;            //ROM中的地址
-    wire [31:0]     data;                          //ROM传出
+    reg  [9:0]      addra       = 10'd0;           //ROM中的地址
+    wire [31:0]     data;                         //ROM传出
  
-    reg             ena         = 0; // 高电平有效，控制SCK时钟的开关
+    reg             ena         = 0;
     
     assign SCK = (clk & ena);
     //速度控制
-    reg [31:0] delay = 1700000;//延迟
+    reg [31:0] mp3Speed = 1700000;//延迟
 
     always @(negedge clk) begin
         if(!rst) begin
@@ -67,7 +67,7 @@ module mp3(
             XCS <= 1'b1;
             state <= WAIT;
             XRESET <= 1'b1; // 硬件不复位
-            addra <= 10'd0;
+            addra <= 17'd0;
             cntSended <= 32'd32;
             music_data <= 32'd0;
         end
@@ -81,75 +81,75 @@ module mp3(
                         else begin
                             cntdown <= 32'd1000;
                             state <= H_RESET;
-                             end
+                        end
                     end
                 /*-----------------硬复------------------*/
                 H_RESET:begin
-                        if(cntdown > 0)
-                            cntdown <= cntdown - 1'b1;
-                        else begin
-                            XCS <= 1'b1;
-                            XRESET <= 1'b0;
-                            cntdown <= 32'd16700;               //复位后延时一段
+                            if(cntdown > 0)
+                                cntdown <= cntdown - 1'b1;
+                            else begin
+                                XCS <= 1'b1;
+                                XRESET <= 1'b0;
+                                cntdown <= 32'd16700;               //复位后延时一段时
 
-                            state <= S_RESET;                   //转移到软复位
-                            cmd <= 32'h02_00_08_04;             //软复位
-                            cntData <= 8'd32;                   //SCI指令地址位数计数
+                                state <= S_RESET;                   //转移到软复位
+                                cmd <= 32'h02_00_08_04;            //软复位指
+                                cntData <= 8'd32;                 //指令、地、数据长度
                             end
                         end
                 /*------------------软复-----------------*/
                 S_RESET:begin
-                        if(cntdown > 0) begin
-                            XRESET <= (cntdown < 32'd16650);
-                            cntdown <= cntdown - 1'b1;
+                            if(cntdown > 0) begin
+                                XRESET <= (cntdown < 32'd16650);
+                                cntdown <= cntdown - 1'b1;
                             end
-                        else if(cntData == 0) begin           //软复位结束
-                            cntdown <= 32'd16600;
+                            else if(cntData == 0) begin           //软复位结
+                                cntdown <= 32'd16600;
 
-                            state <= SET_VOL;                   //转移到设置VOL
-                            cmd <= 32'h02_0b_00_00;
-                            cntData <= 8'd32;
+                                state <= SET_VOL;                   //转移到设置VOL
+                                cmd <= 32'h02_0b_00_00;
+                                cntData <= 8'd32;
 
-                            XCS <= 1'b1;                        //拉高XCS
-                            ena <= 1'b0;                        //关闭输入时钟
-                            SI <= 1'b0;
-                        end
-                        else if(DREQ) begin                     //当DREQ有效时开始软复位
-                             XCS <= 1'b0;
-                             ena <= 1'b1;
-                             SI <= cmd[cntData - 1];
-                             cntData <= cntData - 1'b1;
-                        end
+                                XCS <= 1'b1;                        //拉高XCS
+                                ena <= 1'b0;                        //关闭输入时钟
+                                SI <= 1'b0;
+                            end
+                            else if(DREQ) begin                     //当DREQ有效时开始软复位
+                                XCS <= 1'b0;
+                                ena <= 1'b1;
+                                SI <= cmd[cntData - 1];
+                                cntData <= cntData - 1'b1;
+                            end
                         else begin
-                             XCS <= 1'b1;                        //DREQ无效时继续等
-                             ena <= 1'b0;
-                             SI <= 1'b0;
+                                XCS <= 1'b1;                        //DREQ无效时继续等
+                                ena <= 1'b0;
+                                SI <= 1'b0;
                         end 
-                        end            
+                    end            
 
                 /*----------播放音乐----------*/
                 PLAY:begin
-                if(cntdown > 0)
-                    cntdown <= cntdown - 1'b1;
-                else if(play && rst == 0)begin
-                    XDCS <= 1'b0;
-                    ena <= 1'b1;
-                    if(cntSended == 0) begin              //传输4字节
-                        XDCS <= 1'b1;                   //拉高XDCS
-                        ena <= 1'b0;
-                        SI <= 1'b0;
-                        cntSended <= 32'd32;
-                        music_data <= data;
-                        addra <= addra + 1'b1;
-                    end
-                    else begin
-                        //当DREQ有效 或当前字节尚未发送完 则继续传
-                        if(DREQ || (cntSended != 32 && cntSended != 24 && cntSended != 16 && cntSended != 8)) begin
-                            SI <= music_data[cntSended - 1];
-                            cntSended <= cntSended - 1'b1; 
-                            ena <= 1;
+                        if(cntdown > 0)
+                            cntdown <= cntdown - 1'b1;
+                        else if(play)begin
                             XDCS <= 1'b0;
+                            ena <= 1'b1;
+                            if(cntSended == 0) begin              //传输4字节
+                            XDCS <= 1'b1;                   //拉高XDCS
+                            ena <= 1'b0;
+                            SI <= 1'b0;
+                            cntSended <= 32'd32;
+                            music_data <= data;
+                            addra <= addra + 1'b1;
                         end
+                        else begin
+                        //当DREQ有效 或当前字节尚未发送完 则继续传
+                            if(DREQ || (cntSended != 32 && cntSended != 24 && cntSended != 16 && cntSended != 8)) begin
+                                SI <= music_data[cntSended - 1];
+                                cntSended <= cntSended - 1'b1; 
+                                ena <= 1;
+                                XDCS <= 1'b0;
+                            end
                         else begin      //DREQ拉低，停止传
                             ena <= 1'b0;
                             XDCS <= 1'b1;
@@ -165,7 +165,7 @@ module mp3(
                     cntdown <= cntdown - 1'b1;
                 else if(cntData == 0) begin           //结束次SCI写入
                     if(state == SET_CLOCKF) begin
-                        cntdown <= delay;//32'd1700000;
+                        cntdown <= mp3Speed;//32'd1700000;
                         state <= PLAY;
                     end
                     else if(state == SET_BASS) begin
@@ -183,13 +183,13 @@ module mp3(
                     ena <= 1'b0;
                     SI <= 1'b0;
                 end
-                else if(DREQ) begin                     //写入SCI指令
+                else if(DREQ) begin                     //写入SCI指令、地、数
                     XCS <= 1'b0;
                     ena <= 1'b1;
                     SI <= cmd[cntData - 1];
                     cntData <= cntData - 1'b1;
                 end
-                else begin                              //DREQ拉低
+                else begin                              //DREQ拉低，等
                     XCS <= 1'b1;
                     ena <= 1'b0;
                     SI <= 1'b0;
@@ -197,12 +197,12 @@ module mp3(
             endcase
         end
     end
-    
+
     blk_mem_gen_maintheme maintheme (
         .clka(clk),             // 时钟
         .addra(addra),          // 地址
         .douta(data)           // 数据输出
     );
-    
+ 
 endmodule
 

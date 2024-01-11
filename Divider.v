@@ -34,16 +34,16 @@ module Divider(
             cnt1 <= 32'd0;
             clk2Mhz <= ~clk2Mhz;
         end
-    end
-    
-    always @(posedge clk12Mhz) begin
+        
         if (cnt2 < 1200000 / 2 - 1)
             cnt2 <= cnt2 + 1'b1;
         else begin
             cnt2 <= 32'd0;
             clk10Hz <= ~clk10Hz;
         end
+        
     end
+    
 endmodule
 
 //module Divider(

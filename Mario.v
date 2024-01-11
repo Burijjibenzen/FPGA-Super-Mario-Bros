@@ -21,17 +21,17 @@
 
 
 module Mario(
-	input clk,      // 用于判断左右方向等
+	// 用于判断左右方向等
 	input clk_walk, // 用于切换mario的动作
 	input rst, 
 	input left,  // 向左走
 	input right, // 向右走
 	input jump, 
-
+	
 	output reg [5:0] id, 
 	output reg oriental, // 0: right 1: left 
-	output reg walk,     // 0: no 1: yes
-	output rising
+	output reg walk      // 0: no 1: yes
+	//output rising
    );
 
     //state machine walk
@@ -52,20 +52,20 @@ module Mario(
 
 	reg [1:0] walk_state; // 0/1/2/3 //行走帧
 
-    reg pre_walk_0;
-    reg pre_walk_1;
+//    reg pre_walk_0;
+//    reg pre_walk_1;
     //wire rising;
     
-    assign rising = pre_walk_0 & ~pre_walk_1;
+    //assign rising = pre_walk_0 & ~pre_walk_1;
     
-	always@(posedge clk, negedge rst) begin
+	always@(posedge clk_walk, negedge rst) begin
 		if (!rst) 
 		begin
 			oriental <= 0;
             walk <= 0;
             walk_state <= walk1;
-            pre_walk_0 <= 0;
-            pre_walk_1 <= 0;
+//            pre_walk_0 <= 0;
+//            pre_walk_1 <= 0;
             id <= player1r;
         end
         else
@@ -77,10 +77,10 @@ module Mario(
 				
 			walk <= left ^ right; // 全为0/1就不走
 			
-			pre_walk_1 <= pre_walk_0;
-			pre_walk_0 <= clk_walk;
+//			pre_walk_1 <= pre_walk_0;
+//			pre_walk_0 <= clk_walk;
 
-			if (rising)
+			//if (rising)
               if(jump == 0)
 				if (left != 1) // 没向左走
 				        case (walk_state)

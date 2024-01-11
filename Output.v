@@ -27,6 +27,7 @@ module VGA(
     input  [10:0] mario_x, // mario左上角的横坐标
     input  [9:0]  mario_y, // mario左上角的纵坐标
     input  [5:0]  mario_id,// mario id
+    input  right,          // 右移信号
 	//output [8:0] row_addr, // pixel ram row address, 320 (512) lines
 	//output [9:0] col_addr, // pixel ram col address, 640 (1024) pixels
     output   reg   [3:0]    O_red   , // VGA红色分量
@@ -116,7 +117,7 @@ module VGA(
     reg  [4:0]               map_col; // 当前显示地图方格为当前地图的第几列
     reg  [5:0]           sprites_row; // 当前显示像素为当前元素的第几行
     reg  [5:0]           sprites_col; // 当前显示像素为当前元素的第几列
-    reg  [10:0]                 view; // 当前视野的位置
+    reg  [32:0]                 view; // 当前视野的位置
         
     assign map_addr_offset     = rom_addr_map     + 212 * map_row     + map_col; // 当前的地图块元素位置
     assign sprites_addr_offset = rom_addr_sprites + 640 * sprites_row + sprites_col; // 当前的像素位置
@@ -200,11 +201,14 @@ module VGA(
 	
 	always @(posedge clk_view or negedge rst) begin
 	   if(!rst)
-           view <=  11'd1280 ;
-       else if (view <= 10000)
-           view <= view + 1;
+           view <=  32'd640 ;
+       else if (mario_x >= 640 && right == 1) begin
+           view <= view + 32'd8;
+           if(view >= 12800)
+                view <= view;
+       end
        else
-           view <= 11'd1280;
+           view <= view;
 	end
 	
 endmodule
