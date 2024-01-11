@@ -27,6 +27,7 @@ module world_tb();
     reg jump;
     reg left;
     reg right;
+    reg [32:0] view;
     
     wire [10:0] mario_x;
     wire [9:0]  mario_y;
@@ -40,6 +41,7 @@ module world_tb();
         .jump(jump),
         .left(left),
         .right(right),
+        .view(view),
         .mario_x(mario_x),
         .mario_y(mario_y),
         .mario_id(id)
@@ -74,7 +76,7 @@ module world_tb();
     
     initial
     begin
-        right = 0;
+        right = 1;
 //        forever
 //        begin
 //        #13 right = 0;
@@ -85,7 +87,7 @@ module world_tb();
     initial
     begin
         left = 0;
-        #5000050 left = 1;
+//        #5000050 left = 1;
 //        forever
 //        begin
 //        #18 left = 1;
@@ -96,6 +98,7 @@ module world_tb();
     initial
     begin
         jump = 1;
+        view = 640;
     end
     
 endmodule

@@ -48,9 +48,10 @@ module GAME_TOP(
     wire [10:0] mario_x;
     wire [9:0] mario_y;
     wire [5:0] mario_id;
+    wire [32:0] view;
     
     // ±÷”
-    wire clk_108, clk_12, clk_10, locked;
+    wire clk_108, clk_12, clk_10, clk_40, locked;
     
     //º¸≈Ã ‰»Î
     wire [8:0] keys;
@@ -83,13 +84,15 @@ module GAME_TOP(
         .O_green(color_g),
         .O_blue(color_b),
         .hs(hs),
-        .vs(vs)
+        .vs(vs),
+        .view(view)
     );
     
     Divider uut_divider(
         .clk12Mhz(clk_12),
         .clk2Mhz(clk_2),
-        .clk10Hz(clk_10)
+        .clk10Hz(clk_10),
+        .clk40Hz(clk_40)
     );
     
     mp3 uut_mp3(
@@ -106,12 +109,13 @@ module GAME_TOP(
     );
     
     World uut_world(
-        .clk(clk),
+        .clk(clk_40),
         .clk_10(clk_10),
         .rst(rst),
         .jump(jump),
         .left(left),
         .right(right),
+        .view(view),
         .mario_x(mario_x),
         .mario_y(mario_y),
         .mario_id(mario_id)

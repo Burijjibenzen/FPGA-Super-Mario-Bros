@@ -34,7 +34,8 @@ module VGA(
     output   reg   [3:0]    O_green , // VGA绿色分量
     output   reg   [3:0]    O_blue  , // VGA蓝色分量
     output                    hs    , // 行同步信号
-    output                    vs      // 场同步信号
+    output                    vs    , // 场同步信号
+    output   reg   [32:0]    view     // 当前视野的位置
 	);
 	
     //行时序常数
@@ -117,7 +118,7 @@ module VGA(
     reg  [4:0]               map_col; // 当前显示地图方格为当前地图的第几列
     reg  [5:0]           sprites_row; // 当前显示像素为当前元素的第几行
     reg  [5:0]           sprites_col; // 当前显示像素为当前元素的第几列
-    reg  [32:0]                 view; // 当前视野的位置
+//    reg  [32:0]                 view; // 当前视野的位置
         
     assign map_addr_offset     = rom_addr_map     + 212 * map_row     + map_col; // 当前的地图块元素位置
     assign sprites_addr_offset = rom_addr_sprites + 640 * sprites_row + sprites_col; // 当前的像素位置
