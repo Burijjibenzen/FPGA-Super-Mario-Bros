@@ -42,16 +42,21 @@ module GAME_TOP(
     
     //键盘
     input   key_clk,                //键盘时钟
-    input   key_data                //键盘输入数据
+    input   key_data,               //键盘输入数据
+    
+    //七段数码管
+    output [7:0] shift,
+    output [6:0] oData
     );
     
     wire [10:0] mario_x;
     wire [9:0] mario_y;
     wire [5:0] mario_id;
     wire [32:0] view;
+    wire [31:0] score;
     
     //时钟
-    wire clk_108, clk_12, clk_10, clk_40, locked;
+    wire clk_108, clk_12, clk_10, clk_40, clk_1000, locked;
     
     //键盘输入
     wire [8:0] keys;
@@ -92,7 +97,8 @@ module GAME_TOP(
         .clk12Mhz(clk_12),
         .clk2Mhz(clk_2),
         .clk10Hz(clk_10),
-        .clk40Hz(clk_40)
+        .clk40Hz(clk_40),
+        .clk1000Hz(clk_1000)
     );
     
     mp3 uut_mp3(
@@ -118,7 +124,8 @@ module GAME_TOP(
         .view(view),
         .mario_x(mario_x),
         .mario_y(mario_y),
-        .mario_id(mario_id)
+        .mario_id(mario_id),
+        .score(score)
     );
     
     Keyboard uut_keyboard(
@@ -128,6 +135,14 @@ module GAME_TOP(
         .key_data(key_data),
         .key_state(key_state),
         .key_ascii(keys)
+    );
+    
+    //数码管显示分数
+    Display uut_score(
+        .clk_1000hz(clk_1000),
+        .score(score),
+        .shift(shift),//第几个数码管(片选)
+        .oData(oData)
     );
     
 endmodule

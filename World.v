@@ -21,8 +21,8 @@
 
 
 module World(
-    input clk,
-	input clk_10, 
+    input clk, // 40hz
+	input clk_10, //10hz
 	input rst, 
 	input jump,
 	input left,
@@ -32,7 +32,9 @@ module World(
 	output reg [10:0] mario_x,
 	output reg [9:0] mario_y,
 	output reg [5:0] mario_id = 6'd32,
-	output [5:0] m_id
+	output [5:0] m_id,
+	output reg [31:0] score,
+	output reg death
 	);
 
 	// Common data
@@ -67,6 +69,7 @@ module World(
     parameter RIGHT_1 = 6;
     parameter RIGHT_2 = 7;
     
+    // 碰撞检测
     always @(posedge clk or negedge rst) begin
          if(!rst) begin
                 rom_addr_map <=  12'd0 ;
@@ -125,14 +128,14 @@ module World(
                 else
                     hit_up <= 0;
                     
-                if((typeid[LEFT_1] == 0 || typeid[LEFT_1] == 1 || typeid[LEFT_1] == 2 || typeid[LEFT_1] == 3 || typeid[LEFT_1] == 13 || typeid[LEFT_1] == 38 || typeid[LEFT_1] == 48) ||
-                   (typeid[LEFT_2] == 0 || typeid[LEFT_2] == 1 || typeid[LEFT_2] == 2 || typeid[LEFT_2] == 3 || typeid[LEFT_2] == 13 || typeid[LEFT_2] == 38 || typeid[LEFT_2] == 48))
+                if((typeid[LEFT_1] == 0 || typeid[LEFT_1] == 1 || typeid[LEFT_1] == 2 || typeid[LEFT_1] == 3 || typeid[LEFT_1] == 13 || typeid[LEFT_1] == 39 || typeid[LEFT_1] == 49) ||
+                   (typeid[LEFT_2] == 0 || typeid[LEFT_2] == 1 || typeid[LEFT_2] == 2 || typeid[LEFT_2] == 3 || typeid[LEFT_2] == 13 || typeid[LEFT_2] == 39 || typeid[LEFT_2] == 49))
                     hit_right <= 1;
                 else
                     hit_right <= 0;
                     
-                if((typeid[RIGHT_1] == 0 || typeid[RIGHT_1] == 1 || typeid[RIGHT_1] == 2 || typeid[RIGHT_1] == 3 || typeid[RIGHT_1] == 13 || typeid[RIGHT_1] == 39 || typeid[RIGHT_1] == 49) ||
-                   (typeid[RIGHT_2] == 0 || typeid[RIGHT_2] == 1 || typeid[RIGHT_2] == 2 || typeid[RIGHT_2] == 3 || typeid[RIGHT_2] == 13 || typeid[RIGHT_2] == 39 || typeid[RIGHT_2] == 49))
+                if((typeid[RIGHT_1] == 0 || typeid[RIGHT_1] == 1 || typeid[RIGHT_1] == 2 || typeid[RIGHT_1] == 3 || typeid[RIGHT_1] == 13 || typeid[RIGHT_1] == 38 || typeid[RIGHT_1] == 48) ||
+                   (typeid[RIGHT_2] == 0 || typeid[RIGHT_2] == 1 || typeid[RIGHT_2] == 2 || typeid[RIGHT_2] == 3 || typeid[RIGHT_2] == 13 || typeid[RIGHT_2] == 38 || typeid[RIGHT_2] == 48))
                     hit_left <= 1;
                 else
                     hit_left <= 0;
@@ -174,16 +177,17 @@ module World(
 			jump_state <= 2'b00;
 
 			mario_id <= 6'd32;
+			death <= 0;
 		end 
 		else begin
                        
 					// Let Mario walks! 
-					if (mario_walk) begin
-					   if(hit_right == 1 || hit_left == 1)
+					if (mario_walk && !death) begin
+					   if((hit_right == 1 && right == 1)|| (hit_left == 1 && left == 1))
 					       mario_x <= mario_x;
 					   else
 					    if(mario_x >= 640 && right == 1)
-					       mario_x <= mario_x;
+					       mario_x <= 640;
 					    else
 						   mario_x <= mario_oriental ? mario_x - 11'd16 : mario_x + 11'd16;
 						   
@@ -195,12 +199,22 @@ module World(
 						   mario_id <= m_id;
 					end
 					
+					//die
+					if(mario_y >= 832) begin
+					   death <= 1;
+					   mario_id <= 37;
+				    end
+					
 					// Let Mario jumps! 
+					if(death == 0)
 					case(jump_state)
 					   2'b00: begin
 					       if(jump == 1) begin
 					           jump_state <= 2'b10;
 					           mario_id <= mario_oriental ? 6'd46 : 6'd36;
+					       end
+					       else if(hit_up == 0) begin
+					           jump_state <= 2'b11;
 					       end
 					       else begin
 					           jump_state <= jump_state;
@@ -213,7 +227,7 @@ module World(
                                mario_id <= mario_oriental ? 6'd46 : 6'd36;
 					       end
 					       else begin
-					           if(hit_down == 1) begin
+					           if(hit_down == 1 || mario_y == 0) begin
 					               up_ticks <= 0;
 					               jump_state <= 2'b11;
 					           end
@@ -236,6 +250,17 @@ module World(
 					   end
 					endcase
 		end
+	end
+	
+	// 加分机制
+	always@(posedge clk_10, negedge rst) begin
+	   if(!rst) begin
+	       score <= 0;
+	   end
+	   else begin
+	       if(typeid[UP_1] == 0 || typeid[UP_2] == 0)
+	           score <= score + 100;
+	   end
 	end
 
 endmodule
