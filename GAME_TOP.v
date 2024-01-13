@@ -54,6 +54,7 @@ module GAME_TOP(
     wire [5:0] mario_id;
     wire [32:0] view;
     wire [31:0] score;
+    wire hit_left;
     
     // ±÷”
     wire clk_108, clk_12, clk_10, clk_40, clk_1000, locked;
@@ -84,7 +85,7 @@ module GAME_TOP(
         .mario_x(mario_x),
         .mario_y(mario_y),
         .mario_id(mario_id),
-        .right(right),
+        .right(right && !hit_left),
         .O_red(color_r),
         .O_green(color_g),
         .O_blue(color_b),
@@ -125,7 +126,8 @@ module GAME_TOP(
         .mario_x(mario_x),
         .mario_y(mario_y),
         .mario_id(mario_id),
-        .score(score)
+        .score(score),
+        .hit_left(hit_left)
     );
     
     Keyboard uut_keyboard(

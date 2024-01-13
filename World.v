@@ -34,7 +34,8 @@ module World(
 	output reg [5:0] mario_id = 6'd32,
 	output [5:0] m_id,
 	output reg [31:0] score,
-	output reg death
+	output reg death,
+	output reg hit_left
 	);
 
 	// Common data
@@ -52,7 +53,7 @@ module World(
 	// 碰撞检测部分
     reg hit_up;
     reg hit_down;
-    reg hit_left;
+    //reg hit_left;
     reg hit_right;
     wire [11:0] map_addr_offset[7:0]; // 地图偏移地址
     reg  [4:0]          map_row[7:0]; // 当前马里奥方格为当前地图的第几行
@@ -183,7 +184,7 @@ module World(
                        
 					// Let Mario walks! 
 					if (mario_walk && !death) begin
-					   if((hit_right == 1 && right == 1)|| (hit_left == 1 && left == 1))
+					   if((hit_right == 1 && left == 1)|| (hit_left == 1 && right == 1))
 					       mario_x <= mario_x;
 					   else
 					    if(mario_x >= 640 && right == 1)
@@ -259,7 +260,7 @@ module World(
 	   end
 	   else begin
 	       if(typeid[UP_1] == 0 || typeid[UP_2] == 0)
-	           score <= score + 100;
+	           score <= score + 50;
 	   end
 	end
 
