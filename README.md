@@ -17,3 +17,7 @@ map_process: 处理地图文本
 
 ### bilibili 项目完整解说视频
 `https://www.bilibili.com/video/BV1Xi4y1i7kH/`
+
+### 完整项目链接
+`链接：https://pan.baidu.com/s/1rdwCx_PSkInWs4U8l-QvQw?pwd=awsl`  
+`提取码：awsl` 有些东西没删，乱乱的，不会有人下吧
