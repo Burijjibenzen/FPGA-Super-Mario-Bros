@@ -12,8 +12,8 @@ map_process: 处理地图文本
 同样感谢[这个项目](https://github.com/letyrodri/fpga-super-mario.git)给了我存储素材的启示  
 同样感谢[这个项目](https://github.com/Keytoyze/FPGA-SuperMario.git)给了我实现的大致思路
 
-###bilibili 项目完整展示视频  
+### bilibili 项目完整展示视频  
 `https://www.bilibili.com/video/BV1De41127Tv/`  
 
-###bilibili 项目完整解说视频
+### bilibili 项目完整解说视频
 `https://www.bilibili.com/video/BV1Xi4y1i7kH/`
