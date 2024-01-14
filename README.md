@@ -11,3 +11,9 @@ map_process: 处理地图文本
 部分代码借鉴网络资源，尤其借鉴了[这个项目](https://github.com/def-saizi-baka/Digital_Logic_FPGA_final_hw.git)很多实现的注意点都有提到，避了很多坑  
 同样感谢[这个项目](https://github.com/letyrodri/fpga-super-mario.git)给了我存储素材的启示  
 同样感谢[这个项目](https://github.com/Keytoyze/FPGA-SuperMario.git)给了我实现的大致思路
+
+###bilibili 项目完整展示视频  
+`https://www.bilibili.com/video/BV1De41127Tv/`  
+
+###bilibili 项目完整解说视频
+`https://www.bilibili.com/video/BV1Xi4y1i7kH/`
