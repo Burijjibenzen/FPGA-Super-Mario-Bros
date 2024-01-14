@@ -9,52 +9,43 @@ typedef unsigned int DWORD;
 typedef unsigned long	LDWORD;
 typedef long LONG;
 
-#pragma pack(1)/* ±ØĞëÔÚ½á¹¹Ìå¶¨ÒåÖ®Ç°Ê¹ÓÃ,ÕâÊÇÎªÁËÈÃ½á¹¹ÌåÖĞ¸÷³ÉÔ±°´1×Ö½Ú¶ÔÆë*/
+#pragma pack(1)/* å¿…é¡»åœ¨ç»“æ„ä½“å®šä¹‰ä¹‹å‰ä½¿ç”¨,è¿™æ˜¯ä¸ºäº†è®©ç»“æ„ä½“ä¸­å„æˆå‘˜æŒ‰1å­—èŠ‚å¯¹é½*/
 typedef struct tagBITMAPFILEHEADER
 {
-	WORD bfType; //±£´æÍ¼Æ¬ÀàĞÍ¡£ 'BM'
-	DWORD bfSize; //Î»Í¼ÎÄ¼şµÄ´óĞ¡£¬ÒÔ×Ö½ÚÎªµ¥Î»£¨3-6×Ö½Ú£¬µÍÎ»ÔÚÇ°£©
-	WORD bfReserved1;//Î»Í¼ÎÄ¼ş±£Áô×Ö£¬±ØĞëÎª0(7-8×Ö½Ú£©
-	WORD bfReserved2;//Î»Í¼ÎÄ¼ş±£Áô×Ö£¬±ØĞëÎª0(9-10×Ö½Ú£© 
-	DWORD bfOffBits;   //RGBÊı¾İÆ«ÒÆµØÖ·,Î»Í¼Êı¾İµÄÆğÊ¼Î»ÖÃ£¬ÒÔÏà¶ÔÓÚÎ»Í¼£¨11-14×Ö½Ú£¬µÍÎ»ÔÚÇ°£©
+	WORD bfType; //ä¿å­˜å›¾ç‰‡ç±»å‹ã€‚ 'BM'
+	DWORD bfSize; //ä½å›¾æ–‡ä»¶çš„å¤§å°ï¼Œä»¥å­—èŠ‚ä¸ºå•ä½ï¼ˆ3-6å­—èŠ‚ï¼Œä½ä½åœ¨å‰ï¼‰
+	WORD bfReserved1;//ä½å›¾æ–‡ä»¶ä¿ç•™å­—ï¼Œå¿…é¡»ä¸º0(7-8å­—èŠ‚ï¼‰
+	WORD bfReserved2;//ä½å›¾æ–‡ä»¶ä¿ç•™å­—ï¼Œå¿…é¡»ä¸º0(9-10å­—èŠ‚ï¼‰ 
+	DWORD bfOffBits;   //RGBæ•°æ®åç§»åœ°å€,ä½å›¾æ•°æ®çš„èµ·å§‹ä½ç½®ï¼Œä»¥ç›¸å¯¹äºä½å›¾ï¼ˆ11-14å­—èŠ‚ï¼Œä½ä½åœ¨å‰ï¼‰
 }BITMAPFILEHEADER;
 
 typedef struct tagBITMAPINFOHEADER
 {
-	DWORD biSize;	//±¾½á¹¹ËùÕ¼ÓÃ×Ö½ÚÊı£¨15-18×Ö½Ú£©
-	DWORD biWidth;	//Î»Í¼µÄ¿í¶È£¬ÒÔÏñËØÎªµ¥Î»£¨19-22×Ö½Ú£©
-	DWORD biHeight;	//Î»Í¼µÄ¸ß¶È£¬ÒÔÏñËØÎªµ¥Î»£¨23-26×Ö½Ú£©
-	WORD biPlanes;	//Ä¿±êÉè±¸µÄ¼¶±ğ£¬±ØĞëÎª1(27-28×Ö½Ú£©
-	WORD biBitCount;	//Ã¿¸öÏñËØËùĞèµÄÎ»Êı£¬±ØĞëÊÇ1£¨Ë«É«£©£¨29-30×Ö½Ú£©,4(16É«£©£¬8(256É«£©16(¸ß²ÊÉ«)»ò24£¨Õæ²ÊÉ«£©Ö®Ò»
+	DWORD biSize;	//æœ¬ç»“æ„æ‰€å ç”¨å­—èŠ‚æ•°ï¼ˆ15-18å­—èŠ‚ï¼‰
+	DWORD biWidth;	//ä½å›¾çš„å®½åº¦ï¼Œä»¥åƒç´ ä¸ºå•ä½ï¼ˆ19-22å­—èŠ‚ï¼‰
+	DWORD biHeight;	//ä½å›¾çš„é«˜åº¦ï¼Œä»¥åƒç´ ä¸ºå•ä½ï¼ˆ23-26å­—èŠ‚ï¼‰
+	WORD biPlanes;	//ç›®æ ‡è®¾å¤‡çš„çº§åˆ«ï¼Œå¿…é¡»ä¸º1(27-28å­—èŠ‚ï¼‰
+	WORD biBitCount;	//æ¯ä¸ªåƒç´ æ‰€éœ€çš„ä½æ•°ï¼Œå¿…é¡»æ˜¯1ï¼ˆåŒè‰²ï¼‰ï¼ˆ29-30å­—èŠ‚ï¼‰,4(16è‰²ï¼‰ï¼Œ8(256è‰²ï¼‰16(é«˜å½©è‰²)æˆ–24ï¼ˆçœŸå½©è‰²ï¼‰ä¹‹ä¸€
 
-	DWORD biCompression;//Î»Í¼Ñ¹ËõÀàĞÍ£¬±ØĞëÊÇ0£¨²»Ñ¹Ëõ£©£¬£¨31-34×Ö½Ú£©
-	//1(BI_RLE8Ñ¹ËõÀàĞÍ£©»ò2(BI_RLE4Ñ¹ËõÀàĞÍ£©Ö®Ò»
+	DWORD biCompression;//ä½å›¾å‹ç¼©ç±»å‹ï¼Œå¿…é¡»æ˜¯0ï¼ˆä¸å‹ç¼©ï¼‰ï¼Œï¼ˆ31-34å­—èŠ‚ï¼‰
+	//1(BI_RLE8å‹ç¼©ç±»å‹ï¼‰æˆ–2(BI_RLE4å‹ç¼©ç±»å‹ï¼‰ä¹‹ä¸€
 
-	DWORD biSizeImage;	//Î»Í¼µÄ´óĞ¡(ÆäÖĞ°üº¬ÁËÎªÁË²¹ÆëĞĞÊıÊÇ4µÄ±¶Êı¶øÌí¼ÓµÄ¿Õ×Ö½Ú)£¬ÒÔ×Ö½ÚÎªµ¥Î»£¨35-38×Ö½Ú£©
+	DWORD biSizeImage;	//ä½å›¾çš„å¤§å°(å…¶ä¸­åŒ…å«äº†ä¸ºäº†è¡¥é½è¡Œæ•°æ˜¯4çš„å€æ•°è€Œæ·»åŠ çš„ç©ºå­—èŠ‚)ï¼Œä»¥å­—èŠ‚ä¸ºå•ä½ï¼ˆ35-38å­—èŠ‚ï¼‰
 
-	DWORD biXPelsPerMeter;//Î»Í¼Ë®Æ½·Ö±æÂÊ£¬Ã¿Ã×ÏñËØÊı£¨39-42×Ö½Ú£©
-	DWORD biYPelsPerMeter;//Î»Í¼´¹Ö±·Ö±æÂÊ£¬Ã¿Ã×ÏñËØÊı£¨43-46×Ö½Ú)
-	DWORD biClrUsed;	//Î»Í¼Êµ¼ÊÊ¹ÓÃµÄÑÕÉ«±íÖĞµÄÑÕÉ«Êı£¨47-50×Ö½Ú£©
-	DWORD biClrImportant;	//Î»Í¼ÏÔÊ¾¹ı³ÌÖĞÖØÒªµÄÑÕÉ«Êı£¨51-54×Ö½Ú£©
+	DWORD biXPelsPerMeter;//ä½å›¾æ°´å¹³åˆ†è¾¨ç‡ï¼Œæ¯ç±³åƒç´ æ•°ï¼ˆ39-42å­—èŠ‚ï¼‰
+	DWORD biYPelsPerMeter;//ä½å›¾å‚ç›´åˆ†è¾¨ç‡ï¼Œæ¯ç±³åƒç´ æ•°ï¼ˆ43-46å­—èŠ‚)
+	DWORD biClrUsed;	//ä½å›¾å®é™…ä½¿ç”¨çš„é¢œè‰²è¡¨ä¸­çš„é¢œè‰²æ•°ï¼ˆ47-50å­—èŠ‚ï¼‰
+	DWORD biClrImportant;	//ä½å›¾æ˜¾ç¤ºè¿‡ç¨‹ä¸­é‡è¦çš„é¢œè‰²æ•°ï¼ˆ51-54å­—èŠ‚ï¼‰
 }BITMAPINFOHEADER;
 
-/*
- º¯ÊıÃû³Æ£ºBmp_Smaller
- º¯Êı¹¦ÄÜ£ºÍ¼Æ¬·Å´óËõĞ¡
- ²ÎÊı    £ºold_bmp_path,new_bmp_path
- ·µ»ØÖµ  £º0	ok
-		   1	fail
- ×÷Õß    £ºzhoubing
- ĞŞ¸ÄÊ±¼ä£º20190808
- */
 int Bmp_Bigger_And_Smaller(const char* old_bmp_path, const char* new_bmp_path)
 {
 
-	//¶¨ÒåÔ­ÕÕÆ¬ĞÅÏ¢½á¹¹Ìå
+	//å®šä¹‰åŸç…§ç‰‡ä¿¡æ¯ç»“æ„ä½“
 	BITMAPFILEHEADER head;
 	BITMAPINFOHEADER info;
 
-	//½«½á¹¹ÌåÇå¿Õ
+	//å°†ç»“æ„ä½“æ¸…ç©º
 	memset(&head, 0, sizeof(BITMAPFILEHEADER));
 	memset(&info, 0, sizeof(BITMAPINFOHEADER));
 
@@ -64,29 +55,29 @@ int Bmp_Bigger_And_Smaller(const char* old_bmp_path, const char* new_bmp_path)
 
 	if (fpr1 == NULL || fpw2 == NULL)
 	{
-		printf("Í¼Æ¬´ò¿ªÊ§°Ü!\n");
+		printf("å›¾ç‰‡æ‰“å¼€å¤±è´¥!\n");
 		return -1;
 	}
-	//¶ÁÈ¡Ô­ÕÕÆ¬µÄÍ·ĞÅÏ¢
+	//è¯»å–åŸç…§ç‰‡çš„å¤´ä¿¡æ¯
 	fread(&head, sizeof(BITMAPFILEHEADER), 1, fpr1);
 	fread(&info, sizeof(BITMAPINFOHEADER), 1, fpr1);
 
-	unsigned int old_width = info.biWidth;//»ñÈ¡Ô­Í¼Æ¬µÄ¿í
-	unsigned int old_height = info.biHeight;//»ñÈ¡Ô­Í¼Æ¬µÄ¸ß
+	unsigned int old_width = info.biWidth;//è·å–åŸå›¾ç‰‡çš„å®½
+	unsigned int old_height = info.biHeight;//è·å–åŸå›¾ç‰‡çš„é«˜
 
-	//»ñÈ¡Ô­Í¼Æ¬µÄÎ»Í¼Êı¾İ
+	//è·å–åŸå›¾ç‰‡çš„ä½å›¾æ•°æ®
 	unsigned char* src_data = (unsigned char*)malloc(old_width * old_height * 3);
 	fseek(fpr1, 54, SEEK_SET);
 	fread(src_data, old_width * old_height * 3, 1, fpr1);
 
-	printf("Ô­Í¼Æ¬µÄ¿í:%d\n", old_width);
-	printf("Ô­Í¼Æ¬µÄ¸ß:%d\n", old_height);
+	printf("åŸå›¾ç‰‡çš„å®½:%d\n", old_width);
+	printf("åŸå›¾ç‰‡çš„é«˜:%d\n", old_height);
 
-	//ĞŞ¸ÄÔ­ÕÕÆ¬µÄ¿í¸ß
+	//ä¿®æ”¹åŸç…§ç‰‡çš„å®½é«˜
 	unsigned int new_Width, new_Height;
-	printf("ÇëÊäÈëĞÂÍ¼Æ¬µÄ¿í:\n");
+	printf("è¯·è¾“å…¥æ–°å›¾ç‰‡çš„å®½:\n");
 	scanf("%d", &new_Width);
-	printf("ÇëÊäÈëĞÂÍ¼Æ¬µÄ¸ß:\n");
+	printf("è¯·è¾“å…¥æ–°å›¾ç‰‡çš„é«˜:\n");
 	scanf("%d", &new_Height);
 
 
@@ -94,7 +85,7 @@ int Bmp_Bigger_And_Smaller(const char* old_bmp_path, const char* new_bmp_path)
 	info.biWidth = new_Width;
 	info.biHeight = new_Height;
 
-	//½«ĞŞ¸Ä¹ıµÄÍ·ĞÅÏ¢Ğ´½øĞÂÕÕÆ¬
+	//å°†ä¿®æ”¹è¿‡çš„å¤´ä¿¡æ¯å†™è¿›æ–°ç…§ç‰‡
 	fwrite(&head, sizeof(BITMAPFILEHEADER), 1, fpw2);
 	fwrite(&info, sizeof(BITMAPINFOHEADER), 1, fpw2);
 
@@ -112,30 +103,24 @@ int Bmp_Bigger_And_Smaller(const char* old_bmp_path, const char* new_bmp_path)
 		for (j = 0; j < new_Width; j++)
 		{
 			dwsrcX = j * old_width / new_Width;
-			memcpy(pucDest + j * 3, pucSrc + dwsrcX * 3, 3);//Êı¾İ¿½±´
+			memcpy(pucDest + j * 3, pucSrc + dwsrcX * 3, 3);//æ•°æ®æ‹·è´
 		}
 	}
 	fseek(fpw2, 54, SEEK_SET);
 	fwrite(dest_data, new_Width * new_Height * 3, 1, fpw2);
-	printf("Éú³ÉĞÂÍ¼Æ¬³É¹¦!\n");
+	printf("ç”Ÿæˆæ–°å›¾ç‰‡æˆåŠŸ!\n");
 
-	//ÊÍ·Å¶Ñ¿Õ¼ä
+	//é‡Šæ”¾å †ç©ºé—´
 	free(dest_data);
 	free(src_data);
 
-	//¹Ø±ÕÎÄ¼ş
+	//å…³é—­æ–‡ä»¶
 	fclose(fpr1);
 	fclose(fpw2);
 
 	return 0;
 }
 
-/*
- º¯ÊıÃû³Æ£ºmain
- º¯Êı¹¦ÄÜ£ºÖ÷º¯Êı
- ²ÎÊı£ºvoid
- ·µ»ØÖµ£ºint
- */
 int main()
 {
 	Bmp_Bigger_And_Smaller("sprites.bmp", "new_scale.bmp");
